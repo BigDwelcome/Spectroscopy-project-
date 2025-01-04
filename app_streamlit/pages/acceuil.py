@@ -7,6 +7,10 @@ def show():
     st.title('Accueil')
     st.write("Charger les spectres de la base de données pour commencer.")
 
+    # Vérifier si des données existent déjà dans la session
+    if 'df' not in st.session_state:
+        st.session_state.df = None
+
     # Uploader les fichiers `.mat`
     uploaded_files = st.file_uploader(
         "Choisir des fichiers au format .mat",
@@ -19,7 +23,7 @@ def show():
 
     if uploaded_files:
         st.subheader("Informations contenues dans les fichiers chargés ")
-        
+
         for file in uploaded_files:
             try:
                 # Charger le fichier `.mat`
@@ -40,9 +44,15 @@ def show():
             df = pd.DataFrame(spectre_uploaded)
             st.write("Tableau récapitulatif des spectres chargés :")
             st.dataframe(df)
+            # Stocker le DataFrame dans la session
             st.session_state.df = df
         else:
             st.warning("Aucune donnée valide n'a été chargée.")
+    elif st.session_state.df is not None:
+        # Si des données ont déjà été chargées, les afficher
+        st.write("Tableau récapitulatif des spectres chargés (données existantes) :")
+        st.dataframe(st.session_state.df)
+
 
 # Appeler la fonction
 show()
